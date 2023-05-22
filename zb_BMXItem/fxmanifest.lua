@@ -3,6 +3,7 @@ game 'gta5'
 lua54 "yes"
 
 author 'ZeBee#0433'
+Contributions 'JLDimitri74#2484'
 
 shared_scripts {
     "config.lua",
@@ -21,3 +22,4 @@ escrow_ignore {
     'server/*.lua',
     'config.lua'
 }
+dependency '/assetpacks'

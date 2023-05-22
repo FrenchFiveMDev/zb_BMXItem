@@ -8,10 +8,13 @@ Citizen.CreateThread(function()
             TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
         elseif Config.Framework == "qbcore" then
             TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
+        else
+            print('Veuillez définir un framework valide ou contacter le développeur')
         end
     end
 end)
 
+local CheckIfSpawn = {}
 -- Événement pour faire apparaître l'item en tant que véhicule
 RegisterNetEvent('zb_ItemSpawn:bmx')
 AddEventHandler('zb_ItemSpawn:bmx', function()
@@ -25,6 +28,7 @@ AddEventHandler('zb_ItemSpawn:bmx', function()
         ESX.Streaming.RequestModel(model, function()
             ESX.Game.SpawnVehicle(model, spawnCoords, heading, function(vehicle)
                 TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
+                CheckIfSpawn[PlayerPedId()] = true
             end)
         end)
     elseif Config.Framework == "qbcore" then
@@ -36,6 +40,7 @@ AddEventHandler('zb_ItemSpawn:bmx', function()
         }, {}, {}, {}, function()
             QBCore.Functions.SpawnVehicle(model, function(vehicle)
                 TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
+                CheckIfSpawn[PlayerPedId()] = true
             end, {
                 x = spawnCoords.x,
                 y = spawnCoords.y,
@@ -47,46 +52,49 @@ AddEventHandler('zb_ItemSpawn:bmx', function()
                 bodyHealth = 1000,
             })
         end)
+    else
+        print('Veuillez définir un framework valide ou contacter le développeur')
     end
 end)
 
-local pickupKey = 38 -- Touche E
 local isInItem = false
-local ItemModel = GetHashKey(Config.Item)
-
+local ItemName = Config.Item or "bmx"
+local Check = false
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         local playerPed = PlayerPedId()
         local vehicle = GetVehiclePedIsIn(playerPed, false)
+        
+        if Config.TakeAll then
+            Check = true
+        else
+            Check = CheckIfSpawn[PlayerPedId()] or false
+        end
 
-        if vehicle ~= 0 and GetEntityModel(vehicle) == ItemModel then
+        if vehicle ~= 0 and GetEntityModel(vehicle) == GetHashKey(ItemName) and Check then
             isInItem = true
 
-            if IsControlJustReleased(0, pickupKey) then
-                local netID = NetworkGetNetworkIdFromEntity(vehicle)
-                if Config.Framework == "esx" then
-                    ESX.TriggerServerCallback('zb_ItemSpawn:pickupItem', function() end, netID)
-                elseif Config.Framework == "qbcore" then
-                    QBCore.Functions.TriggerCallback('zb_ItemSpawn:pickupItem', function() end, netID)
-                end
+            if IsControlJustReleased(0, Config.pickupKey or 38) then
                 DeleteVehicle(vehicle)
                 if Config.Framework == "esx" then
-                    local itemName = Config.Item
-                    local amount = 1
-                    TriggerServerEvent('zb_ItemSpawn:giveItem', itemName, amount)
-                    ESX.ShowNotification("Vous avez récupéré le "..Config.Item..".")
+                    TriggerServerEvent('zb_ItemSpawn:giveItem')
+                    ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
+                    CheckIfSpawn[PlayerPedId()] = nil
                 elseif Config.Framework == "qbcore" then
-                    local itemName = Config.Item
-                    local amount = 1
-                    TriggerServerEvent('zb_ItemSpawn:giveItem', itemName, amount)
-                    QBCore.Functions.Notify("Vous avez récupéré le "..Config.Item..".")
+                    TriggerServerEvent('zb_ItemSpawn:giveItem')
+                    QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
+                    CheckIfSpawn[PlayerPedId()] = nil
+                else
+                    print('Veuillez définir un framework valide ou contacter le développeur')
                 end
             else
                 if Config.Framework == "esx" then
-                    ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..Config.Item..".")
+                    ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
                 elseif Config.Framework == "qbcore" then
-                    QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..Config.Item..".")
+                    QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                else
+                    print('Veuillez définir un framework valide ou contacter le développeur')
                 end
             end
         else
