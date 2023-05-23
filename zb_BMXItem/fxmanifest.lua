@@ -2,6 +2,8 @@ fx_version 'adamant'
 game 'gta5'
 lua54 "yes"
 
+version '1.0.2'
+
 author 'ZeBee#0433'
 Contributions 'JLDimitri74#2484'
 
@@ -22,4 +24,3 @@ escrow_ignore {
     'server/*.lua',
     'config.lua'
 }
-dependency '/assetpacks'

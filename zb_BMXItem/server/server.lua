@@ -9,7 +9,6 @@ else
     print('Veuillez définir un framework valide ou contacter le développeur') 
 end
 
-
 local CheckSpawnByPlayer = {}
 if Config.Framework == "esx" then
     ESX.RegisterUsableItem(Config.Item, function(source)

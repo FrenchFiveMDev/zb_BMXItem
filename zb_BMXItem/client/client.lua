@@ -64,6 +64,7 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         local playerPed = PlayerPedId()
+        local playerSpeed = GetEntitySpeed(playerPed) 
         local vehicle = GetVehiclePedIsIn(playerPed, false)
         
         if Config.TakeAll then
@@ -75,26 +76,48 @@ Citizen.CreateThread(function()
         if vehicle ~= 0 and GetEntityModel(vehicle) == GetHashKey(ItemName) and Check then
             isInItem = true
 
-            if IsControlJustReleased(0, Config.pickupKey or 38) then
-                DeleteVehicle(vehicle)
-                if Config.Framework == "esx" then
-                    TriggerServerEvent('zb_ItemSpawn:giveItem')
-                    ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
-                    CheckIfSpawn[PlayerPedId()] = nil
-                elseif Config.Framework == "qbcore" then
-                    TriggerServerEvent('zb_ItemSpawn:giveItem')
-                    QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
-                    CheckIfSpawn[PlayerPedId()] = nil
+            if playerSpeed == 0 then
+                if IsControlJustReleased(0, Config.pickupKey or 38) then
+                    DeleteVehicle(vehicle)
+                    if Config.Framework == "esx" then
+                        TriggerServerEvent('zb_ItemSpawn:giveItem')
+                        if Config.notificationLibrary == "okok" then
+                            -- utiliser la notification de la bibliothèque okok
+                            exports['okokNotify']:Alert("Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, 'success')
+                        elseif Config.notificationLibrary == "vNotif" then
+                            -- utiliser la notification de la bibliothèque vNotif
+                            exports['VCore-Noti']:Noti("info", "Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, "right")
+                        elseif Config.notificationLibrary == "esxnotifi" then
+                            -- utiliser la notification de la bibliothèque esxnotif
+                            ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
+                        end
+                        -- ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
+                        CheckIfSpawn[PlayerPedId()] = nil
+                    elseif Config.Framework == "qbcore" then
+                        TriggerServerEvent('zb_ItemSpawn:giveItem')
+                        if Config.notificationLibrary == "okok" then
+                            -- utiliser la notification de la bibliothèque okok
+                            exports['okokNotify']:Alert("Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, 'success')
+                        elseif Config.notificationLibrary == "vNotif" then
+                            -- utiliser la notification de la bibliothèque vNotif
+                            exports['VCore-Noti']:Noti("info", "Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, "right")
+                        elseif Config.notificationLibrary == "qbnotify" then
+                            -- utiliser la notification de la bibliothèque esxnotif
+                            QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
+                        end
+                        -- QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
+                        CheckIfSpawn[PlayerPedId()] = nil
+                    else
+                        print('Veuillez définir un framework valide ou contacter le développeur')
+                    end
                 else
-                    print('Veuillez définir un framework valide ou contacter le développeur')
-                end
-            else
-                if Config.Framework == "esx" then
-                    ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
-                elseif Config.Framework == "qbcore" then
-                    QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
-                else
-                    print('Veuillez définir un framework valide ou contacter le développeur')
+                    if Config.Framework == "esx" then
+                        ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                    elseif Config.Framework == "qbcore" then
+                        QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                    else
+                        print('Veuillez définir un framework valide ou contacter le développeur')
+                    end
                 end
             end
         else
