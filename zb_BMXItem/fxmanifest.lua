@@ -5,7 +5,7 @@ lua54 "yes"
 version '1.0.3'
 
 author 'ZeBee#0433'
-Contributions 'JLDimitri74#2484'
+Contributors 'JLDimitri74#2484' 'Malizniak#4796' 'Sarish#0609'
 
 shared_scripts {
     "config.lua",
