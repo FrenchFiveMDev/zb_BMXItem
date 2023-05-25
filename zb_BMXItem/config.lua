@@ -9,3 +9,5 @@ Config.Item = "bmx" -- Remplacez par l'élément approprié utilisé dans votre 
 Config.pickupKey = 38 -- Touche E pour récupérer le BMX
 
 Config.TakeAll = false --  [true] peux récupérer les BMX des autres joueurs [false] ne peux pas récupérer le BMX des joueurs
+
+Config.InVehicle = true -- [true] est obligé d'être à l'intérieur pour supprimer le véhicule [false] et pas obligé d'être à l'intérieur pour supprimer le véhicule
