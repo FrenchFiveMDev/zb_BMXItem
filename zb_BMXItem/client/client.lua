@@ -57,71 +57,76 @@ AddEventHandler('zb_ItemSpawn:bmx', function()
     end
 end)
 
-local isInItem = false
 local ItemName = Config.Item or "bmx"
 local Check = false
+local vehicle = nil
+local VehicleCord = nil
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         local playerPed = PlayerPedId()
-        local playerSpeed = GetEntitySpeed(playerPed) 
-        local vehicle = GetVehiclePedIsIn(playerPed, false)
+            
+        if Config.InVehicle then
+             vehicle,VehicleCord = GetVehiclePedIsIn(playerPed, false), 0
+        else
+            if Config.Framework == "esx" then
+                vehicle,VehicleCord = ESX.Game.GetClosestVehicle(GetEntityCoords(playerPed))
+            elseif Config.Framework == "qbcore" then
+                vehicle, VehicleCord = QBCore.Functions.GetClosestVehicle(GetEntityCoords(playerPed))
+            else
+                print('Veuillez définir un framework valide ou contacter le développeur')
+            end
+        end
         
         if Config.TakeAll then
             Check = true
         else
-            Check = CheckIfSpawn[PlayerPedId()] or false
+            Check = CheckIfSpawn[playerPed] or false
         end
 
-        if vehicle ~= 0 and GetEntityModel(vehicle) == GetHashKey(ItemName) and Check then
-            isInItem = true
-
-            if playerSpeed == 0 then
-                if IsControlJustReleased(0, Config.pickupKey or 38) then
-                    DeleteVehicle(vehicle)
-                    if Config.Framework == "esx" then
-                        TriggerServerEvent('zb_ItemSpawn:giveItem')
-                        if Config.notificationLibrary == "okok" then
-                            -- utiliser la notification de la bibliothèque okok
-                            exports['okokNotify']:Alert("Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, 'success')
-                        elseif Config.notificationLibrary == "vNotif" then
-                            -- utiliser la notification de la bibliothèque vNotif
-                            exports['VCore-Noti']:Noti("info", "Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, "right")
-                        elseif Config.notificationLibrary == "esxnotifi" then
-                            -- utiliser la notification de la bibliothèque esxnotif
-                            ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
-                        end
-                        -- ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
-                        CheckIfSpawn[PlayerPedId()] = nil
-                    elseif Config.Framework == "qbcore" then
-                        TriggerServerEvent('zb_ItemSpawn:giveItem')
-                        if Config.notificationLibrary == "okok" then
-                            -- utiliser la notification de la bibliothèque okok
-                            exports['okokNotify']:Alert("Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, 'success')
-                        elseif Config.notificationLibrary == "vNotif" then
-                            -- utiliser la notification de la bibliothèque vNotif
-                            exports['VCore-Noti']:Noti("info", "Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, "right")
-                        elseif Config.notificationLibrary == "qbnotify" then
-                            -- utiliser la notification de la bibliothèque esxnotif
-                            QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
-                        end
-                        -- QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
-                        CheckIfSpawn[PlayerPedId()] = nil
-                    else
-                        print('Veuillez définir un framework valide ou contacter le développeur')
+        if vehicle ~= 0 and DoesEntityExist(vehicle) and VehicleCord <= 2.0 and GetEntityModel(vehicle) == GetHashKey(ItemName) and GetEntitySpeed(vehicle) == 0 and Check then
+            if IsControlJustReleased(0, Config.pickupKey or 38) then
+                DeleteVehicle(vehicle)
+                if Config.Framework == "esx" then
+                    TriggerServerEvent('zb_ItemSpawn:giveItem')
+                    if Config.notificationLibrary == "okok" then
+                        -- utiliser la notification de la bibliothèque okok
+                        exports['okokNotify']:Alert("Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, 'success')
+                    elseif Config.notificationLibrary == "vNotif" then
+                        -- utiliser la notification de la bibliothèque vNotif
+                        exports['VCore-Noti']:Noti("info", "Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, "right")
+                    elseif Config.notificationLibrary == "esxnotifi" then
+                        -- utiliser la notification de la bibliothèque esxnotif
+                        ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
                     end
+                    -- ESX.ShowNotification("Vous avez récupéré le "..tostring(ItemName)..".")
+                    CheckIfSpawn[playerPed] = nil
+                elseif Config.Framework == "qbcore" then
+                    TriggerServerEvent('zb_ItemSpawn:giveItem')
+                    if Config.notificationLibrary == "okok" then
+                        -- utiliser la notification de la bibliothèque okok
+                        exports['okokNotify']:Alert("Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, 'success')
+                    elseif Config.notificationLibrary == "vNotif" then
+                        -- utiliser la notification de la bibliothèque vNotif
+                        exports['VCore-Noti']:Noti("info", "Vehicle Item", "Vous avez récupéré le "..tostring(ItemName)..".", 5000, "right")
+                    elseif Config.notificationLibrary == "qbnotify" then
+                        -- utiliser la notification de la bibliothèque esxnotif
+                        QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
+                    end
+                    -- QBCore.Functions.Notify("Vous avez récupéré le "..tostring(ItemName)..".")
+                    CheckIfSpawn[playerPed] = nil
                 else
-                    if Config.Framework == "esx" then
-                        ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
-                    elseif Config.Framework == "qbcore" then
-                        QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
-                    else
-                        print('Veuillez définir un framework valide ou contacter le développeur')
-                    end
+                    print('Veuillez définir un framework valide ou contacter le développeur')
+                end
+            else
+                if Config.Framework == "esx" then
+                    ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                elseif Config.Framework == "qbcore" then
+                    QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                else
+                    print('Veuillez définir un framework valide ou contacter le développeur')
                 end
             end
-        else
-            isInItem = false
         end
     end
 end)
