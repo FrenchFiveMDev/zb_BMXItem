@@ -2,7 +2,7 @@ fx_version 'adamant'
 game 'gta5'
 lua54 "yes"
 
-version '1.0.2'
+version '1.0.3'
 
 author 'ZeBee#0433'
 Contributions 'JLDimitri74#2484'
