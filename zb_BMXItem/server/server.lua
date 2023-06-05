@@ -1,12 +1,11 @@
-ESX = nil
-QBCore = nil
-
 if Config.Framework == "esx" then
-    TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+    -- TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+    ESX = exports['es_extended']:getSharedObject()
 elseif Config.Framework == "qbcore" then
-    TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
+    -- TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
+    local QBCore = exports['qb-core']:GetCoreObject()
 else
-    print('Veuillez définir un framework valide ou contacter le développeur') 
+    print('Veuillez définir un framework valide ou contacter le développeur')
 end
 
 local CheckSpawnByPlayer = {}
