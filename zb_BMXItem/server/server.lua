@@ -9,14 +9,48 @@ else
 end
 
 local CheckSpawnByPlayer = {}
-if Config.Framework == "esx" then
+if Config.Framework == "NewEsx" then
+    if Config.Ox == "on" then 
+        exports(Config.Item, function(event, item, inventory, slot, data)
+            -- Player is attempting to use the item.
+            if event == 'usingItem' then
+                local xPlayer = ESX.GetPlayerFromId(source)
+                xPlayer.removeInventoryItem(Config.Item, 1)
+                TriggerClientEvent('zb_ItemSpawn:bmx', source)
+                CheckSpawnByPlayer[source] = true
+         
+                return
+            end
+        end)
+        -- local xPlayer = ESX.GetPlayerFromId(source)
+        -- xPlayer.removeInventoryItem(Config.Item, 1)
+        -- TriggerClientEvent('zb_ItemSpawn:bmx', source)
+        -- CheckSpawnByPlayer[source] = true
+    end
+    
+    if Config.Ox == "off" then 
+        ESX.RegisterUsableItem(Config.Item, function(source)
+            local xPlayer = ESX.GetPlayerFromId(source)
+            xPlayer.removeInventoryItem(Config.Item, 1)
+            TriggerClientEvent('zb_ItemSpawn:bmx', source)
+            CheckSpawnByPlayer[source] = true
+        end)
+    end
+elseif Config.Framework == "OldEsx" then
     ESX.RegisterUsableItem(Config.Item, function(source)
         local xPlayer = ESX.GetPlayerFromId(source)
         xPlayer.removeInventoryItem(Config.Item, 1)
         TriggerClientEvent('zb_ItemSpawn:bmx', source)
         CheckSpawnByPlayer[source] = true
     end)
-elseif Config.Framework == "qbcore" then
+elseif Config.Framework == "NewQbcore" then
+    QBCore.Functions.CreateUseableItem(Config.Item, function(source)
+        local xPlayer = QBCore.Functions.GetPlayer(source)
+        xPlayer.Functions.RemoveItem(Config.Item, 1)
+        TriggerClientEvent('zb_ItemSpawn:bmx', source)
+        CheckSpawnByPlayer[source] = true
+    end)
+elseif Config.Framework == "OldQbcore" then
     QBCore.Functions.CreateUseableItem(Config.Item, function(source)
         local xPlayer = QBCore.Functions.GetPlayer(source)
         xPlayer.Functions.RemoveItem(Config.Item, 1)

@@ -2,10 +2,10 @@ fx_version 'adamant'
 game 'gta5'
 lua54 "yes"
 
-version '1.0.4'
+version '1.0.2'
 
 author 'ZeBee#0433'
-Contributors 'JLDimitri74#2484 , Malizniak#4796 , Sarish#0609'
+Contributions 'JLDimitri74#2484'
 
 shared_scripts {
     "config.lua",
