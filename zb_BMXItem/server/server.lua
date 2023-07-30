@@ -1,9 +1,12 @@
-if Config.Framework == "esx" then
+if Config.Framework == "NewEsx" then
     -- TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
     ESX = exports['es_extended']:getSharedObject()
-elseif Config.Framework == "qbcore" then
-    -- TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
+elseif Config.Framework == "OldEsx" then
+    TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+elseif Config.Framework == "NewQbcore" then
     local QBCore = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == "OldQbcore" then
+    TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
 else
     print('Veuillez définir un framework valide ou contacter le développeur')
 end
