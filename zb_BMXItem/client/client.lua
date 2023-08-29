@@ -175,7 +175,11 @@ Citizen.CreateThread(function()
                 else
                     if Config.Framework == "NewEsx"then
                         ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                    elseif Config.Framework == "OldEsx"then
+                        ESX.ShowHelpNotification("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
                     elseif Config.Framework == "NewQbcore"then
+                        QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
+                    elseif Config.Framework == "OldQbcore"then
                         QBCore.Functions.Notify("Appuyez sur ~INPUT_CONTEXT~ pour récupérer le "..tostring(ItemName)..".")
                     else
                         print('Veuillez définir un framework valide ou contacter le développeur')

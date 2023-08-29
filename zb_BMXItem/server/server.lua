@@ -75,10 +75,16 @@ AddEventHandler('zb_ItemSpawn:giveItem', function()
     end
 
     if Check then
-        if Config.Framework == "esx" then
+        if Config.Framework == "NewEsx" then
             local xPlayer = ESX.GetPlayerFromId(src)
             xPlayer.addInventoryItem(Config.Item, 1)
-        elseif Config.Framework == "qbcore" then
+        elseif Config.Framework == "OldEsx" then
+            local player = QBCore.Functions.GetPlayer(src)
+            xPlayer.addInventoryItem(Config.Item, 1)
+        elseif Config.Framework == "NewQbcore" then
+            local player = QBCore.Functions.GetPlayer(src)
+            player.Functions.AddItem(Config.Item, 1)
+        elseif Config.Framework == "OldQbcore" then
             local player = QBCore.Functions.GetPlayer(src)
             player.Functions.AddItem(Config.Item, 1)
         else
